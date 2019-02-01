@@ -2,12 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
-  const data = {
-    title: 'FE weekly report',
-    message: '',
-    isAuth: !!req.session.accessToken
-  }
-  res.render('index', data);
+  res.render('login');
 });
 
 module.exports = router;
