@@ -3,10 +3,9 @@ const router = express.Router();
 
 router.get('/', function (req, res, next) {
   const data = {
-    title: 'FE weekly report',
-    message: '',
-    isAuth: !!req.session.accessToken
-  }
+    ...req.middlewareData,
+    title: 'FE | Home'
+  };
   res.render('index', data);
 });
 
