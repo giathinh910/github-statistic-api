@@ -5,16 +5,18 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const session = require('express-session');
+const cors = require('cors');
 require('dotenv').config();
 const {
   isAuthenticated,
-  isNotAuthenticated
+  isNotAuthenticated,
 } = require('./middlewares');
 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 const oauth2Router = require('./routes/oauth2');
+const oauthApi = require('./api/oauth');
 
 const app = express();
 
@@ -25,23 +27,23 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
-  extended: false
+  extended: false,
 }));
 app.use(cookieParser());
 app.use(session({
   secret: process.env.SESSION_SECRET,
   cookie: {
     secure: false,
-    maxAge: 1 * 60 * 1000
+    maxAge: 60 * 60 * 1000,
   },
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
   indentedSyntax: true, // true = .sass and false = .scss
-  sourceMap: true
+  sourceMap: true,
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -50,13 +52,16 @@ app.use('/login', isNotAuthenticated, loginRouter);
 app.use('/logout', isAuthenticated, logoutRouter);
 app.use('/auth', isNotAuthenticated, oauth2Router);
 
+app.use(cors());
+app.use('/api/auth', oauthApi);
+
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
