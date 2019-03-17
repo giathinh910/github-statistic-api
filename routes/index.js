@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next) {
   const data = {
     ...req.middlewareData,
-    title: 'FE | Home'
+    title: 'FE | Home',
   };
-  res.render('index', data);
+
+  res.redirect('/member-statistic');
 });
 
 module.exports = router;
