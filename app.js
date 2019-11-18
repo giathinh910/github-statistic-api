@@ -18,7 +18,7 @@ app.use(express.urlencoded({
 
 app.use(cookieParser());
 
-app.use('/', function(req, res, next) {
+app.all('/', function(req, res, next) {
   res.send('Hello World!')
 });
 
